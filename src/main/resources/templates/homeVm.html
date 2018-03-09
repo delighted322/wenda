@@ -1,0 +1,62 @@
+<html>
+<body>
+<pre>
+    #*
+        你看不到我
+        多行注释
+    *#
+    $!{value1}  ## 解析并显示出value1的值
+    $!{value2}  <!--value2这个变量不存在 这样写不会显示 !的意思是 如果这个变量不存在 强制为空 -->
+    ${value3}   ## value3这个变量不存在 没有加! -> 如果这个变量不存在 就把它当成文本去解析
+
+    colors: $!{colors}   ## 其实就把colors变量toString显示了
+
+    ## for循环 foreach.index和foreach.count是自带的变量 index从0开始 count从1开始
+    #foreach($color in $colors)
+        This is color $!{foreach.index}: $color $!{foreach.count}
+    #end
+
+    ## 在vm中 可以像调Java函数一样把东西调出来
+    #foreach($key in $map.keySet())
+        Number: $key, Value: $map.get($key)
+    #end
+
+    ## 在Java里面怎么写 在模板里面就怎么写
+    #foreach($kv in $map.entrySet())
+        Number: $kv.key, Value: $kv.value
+    #end
+
+    ## 会去调user的getName()方法 如果有这样的方法的话就去把它显示出来  .什么就去调get什么的方法
+    User: $!{user.name}
+    Description: $!{user.description}
+    Description: $!{user.getDescription()}
+
+    ## 可以在模板里面自己设置变量 然后再显示出来 用#set($... = ...)声明变量
+    #set($title = "nowcoder")
+    title: ${title}
+
+    ## parse 把header.html中的代码放在这个位置 并对其中的内容进行解析
+    ## include 只是纯粹地把header.html中的文本包括进来 但不会做模板解析
+    Parse: #parse("header.html")
+    Include: #include("header.html")
+
+    ## 宏 类似于函数？ 括号内的意思是 这个宏的名字是render_color 需要两个参数：$index和$color
+    #macro (render_color, $index, $color)
+        Color Render $index, $color
+    #end
+
+    ## 对宏的调用
+    #foreach($color in $colors)
+        #render_color($foreach.index, $color)
+    #end
+
+    ## 可以把字符串连在一起 $helloworld1显示出来是 hello world 但如果用单引号就不会解析
+    #set($hello = "hello")
+    #set($helloworld1 = "$!{hello} world")
+    #set($helloworld2 = '$!{hello} world')
+    $!{hello}
+    $!{helloworld1}
+    $!{helloworld2}
+</pre>
+</body>
+</html>
